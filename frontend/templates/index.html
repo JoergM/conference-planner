@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello Bulma!</title>
+    <title>Conference Planner</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -23,15 +23,15 @@
 
         <div id="navbarBasicExample" class="navbar-menu">
             <div class="navbar-end">
-                <a class="navbar-item">
+                <a class="navbar-item" href="/speakers/">
                     Speakers
                 </a>
 
-                <a class="navbar-item">
+                <a class="navbar-item" href="/sessions/">
                     Sessions
                 </a>
 
-                <a class="navbar-item">
+                <a class="navbar-item" href="/schedule/">
                     Schedule
                 </a>
             </div>
@@ -45,8 +45,19 @@
                 Conference Planner
             </h1>
             <p class="subtitle is-4">
-                Choose a section in the menu.
+                Choose a section
             </p>
+            <div class="container is-full">
+                <a class="button is-large" href="/speakers/">
+                    Speakers
+                </a>
+                <a class="button is-large" href="/sessions/">
+                    Sessions
+                </a>
+                <a class="button is-large" href="/schedule/">
+                    Schedule
+                </a>
+            </div>
         </div>
     </section>
 

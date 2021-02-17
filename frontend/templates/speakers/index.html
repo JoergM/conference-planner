@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Conference Planner</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <div class="block">
+                <span class="icon is-large">
+                    <i class="fa fa-home fa-2x"></i>
+                </span>
+                <span>Conference Planner</span>
+            </div>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-end">
+                <a class="navbar-item" href="/speakers/">
+                    Speakers
+                </a>
+
+                <a class="navbar-item" href="/sessions/">
+                    Sessions
+                </a>
+
+                <a class="navbar-item" href="/schedule/">
+                    Schedule
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Body -->
+    <section class="section">
+        <div class="container">
+
+            <div class="block">
+                <h1 class="title">
+                    Conference Speakers
+                </h1>
+            </div>
+            <div class="card mt-3">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-left">
+                            <figure class="image is-48x48">
+                                <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <p class="title is-4">John Smith</p>
+                            <p class="subtitle is-6">@johnsmith</p>
+                        </div>
+                    </div>
+
+                    <div class="content">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Phasellus nec iaculis mauris. <a>@bulmaio</a>.
+                        <a href="#">#css</a> <a href="#">#responsive</a>
+                        <br>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-left">
+                            <figure class="image is-48x48">
+                                <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <p class="title is-4">John Smith</p>
+                            <p class="subtitle is-6">@johnsmith</p>
+                        </div>
+                    </div>
+
+                    <div class="content">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Phasellus nec iaculis mauris. <a>@bulmaio</a>.
+                        <a href="#">#css</a> <a href="#">#responsive</a>
+                        <br>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="block mt-5">
+                <a href="speakers/add" class="button is-primary">
+                    Add
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Conference Planner</strong> a demo application by <a href="https://github.com/joergm">Joerg
+                    Mueller</a>.
+                The source code is available on <a href="https://github.com/joergm/conference-planner">Github</a>
+            </p>
+        </div>
+    </footer>
+</body>
+
+</html>
