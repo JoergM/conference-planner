@@ -1303,6 +1303,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "schedule"
 version = "0.1.0"
+dependencies = [
+ "actix-service 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "actix-web 3.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "env_logger 0.8.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "handlebars 3.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rand 0.8.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.62 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "scopeguard"
@@ -1364,6 +1372,14 @@ dependencies = [
 [[package]]
 name = "session"
 version = "0.1.0"
+dependencies = [
+ "actix-service 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "actix-web 3.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "env_logger 0.8.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "handlebars 3.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rand 0.8.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.62 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "sha-1"
@@ -1424,6 +1440,15 @@ dependencies = [
 [[package]]
 name = "speaker"
 version = "0.1.0"
+dependencies = [
+ "actix-service 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "actix-web 3.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "env_logger 0.8.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "handlebars 3.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rand 0.8.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 1.0.123 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.62 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "standback"
