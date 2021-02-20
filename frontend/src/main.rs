@@ -11,7 +11,7 @@ use serde_json::json;
 use std::{env, sync::Arc};
 use std::{thread, time};
 
-use handlebars::Handlebars;
+use handlebars::{Handlebars, JsonValue};
 
 #[derive(Debug, Clone)]
 struct AppState<'a> {
@@ -30,7 +30,8 @@ async fn index(scope: web::Data<AppState<'_>>) -> impl Responder {
 
 #[get("/speakers/")]
 async fn speakers(scope: web::Data<AppState<'_>>) -> impl Responder {
-    let data = json!({});
+    let resp = reqwest::blocking::get("http://speakers:8081").unwrap();
+    let data: JsonValue = serde_json::from_str(&resp.text().unwrap()).unwrap();
 
     let hb = scope.hb.clone();
 
@@ -68,13 +69,13 @@ async fn main() -> std::io::Result<()> {
 
     //register handlebars
     let mut hb = Handlebars::new();
-    hb.register_template_file("index", "templates/index.html")
+    hb.register_template_string("index", include_str!("templates/index.html"))
         .unwrap();
-    hb.register_template_file("speakers", "templates/speakers/index.html")
+    hb.register_template_string("speakers", include_str!("templates/speakers/index.html"))
         .unwrap();
-    hb.register_template_file("schedule", "templates/schedule/index.html")
+    hb.register_template_string("schedule", include_str!("templates/schedule/index.html"))
         .unwrap();
-    hb.register_template_file("sessions", "templates/sessions/index.html")
+    hb.register_template_string("sessions", include_str!("templates/sessions/index.html"))
         .unwrap();
 
     //initialize App_State
