@@ -2,17 +2,16 @@ use actix_service::Service;
 use actix_web::{get, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
 use rand::Rng;
-use serde::Serialize;
 use std::env;
 use std::{thread, time};
+
+mod speaker;
+use speaker::*;
 
 #[derive(Debug, Clone)]
 struct AppState {
     speakers: Vec<Speaker>,
 }
-
-#[derive(Debug, Clone, Serialize)]
-struct Speaker {}
 
 #[get("/")]
 async fn hello(scope: web::Data<AppState>) -> impl Responder {
@@ -29,12 +28,10 @@ async fn main() -> std::io::Result<()> {
     let random_delay_env = env::var("RANDOM_DELAY_MAX").unwrap_or("1".to_string());
     let random_delay_max: u64 = random_delay_env.parse().unwrap();
 
-    //load Speakers Array
-
-    let speakers: Vec<Speaker> = Vec::new();
-
     //initialize App_State
-    let app_state = AppState { speakers };
+    let app_state = AppState {
+        speakers: speaker::generate_examples(),
+    };
 
     //Initialize Logger
     env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
