@@ -14,10 +14,12 @@
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <div class="block">
-                <span class="icon is-large">
-                    <i class="fa fa-home fa-2x"></i>
-                </span>
-                <span>Conference Planner</span>
+                <a href="/" class="has-text-white">
+                    <span class="icon is-large">
+                        <i class="fa fa-home fa-2x"></i>
+                    </span>
+                    <span>Conference Planner</span>
+                </a>
             </div>
         </div>
 
@@ -48,7 +50,7 @@
                 </h1>
             </div>
             {{#each this}}
-            <div class="card mt-3">
+            <div class="card mt-3" id="{{id}}">
                 <div class="card-content">
                     <div class="media">
                         <div class="media-left">
@@ -69,11 +71,11 @@
             </div>
             {{/each}}
 
-            <div class="block mt-5">
+            <!-- <div class="block mt-5">
                 <a href="speakers/add" class="button is-primary">
                     Add
                 </a>
-            </div>
+            </div> -->
         </div>
     </section>
 
