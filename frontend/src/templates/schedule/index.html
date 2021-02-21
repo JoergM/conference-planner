@@ -41,25 +41,28 @@
     </nav>
 
     <!-- Body -->
-    <section class="hero is-primary is-large">
-        <div class="hero-body">
-            <h1 class="title is-1">
-                Conference Planner
+    <section class="section">
+        <div class="block">
+            <h1 class="title">
+                Schedule
             </h1>
-            <p class="subtitle is-4">
-                Choose a section
-            </p>
-            <div class="container is-full">
-                <a class="button is-large" href="/speakers/">
-                    Speakers
-                </a>
-                <a class="button is-large" href="/sessions/">
-                    Sessions
-                </a>
-                <a class="button is-large" href="/schedule/">
-                    Schedule
-                </a>
+        </div>
+        <div class="container is-fluid">
+            {{#each this}}
+            <div class="card mt-3" id="{{id}}">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-content">
+                            <p class="subtitle is-6">{{start}} - {{end}}</p>
+                            <p class="title is-4"> <a href="/sessions/{{session_id}}">{{session_title}}</a>
+                                {{#if session_tag}}<span class="tag">{{session_tag}}</span>{{/if}}
+                            </p>
+                            <p class="subtitle is-5">by {{speaker_name}}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
+            {{/each}}
         </div>
     </section>
 

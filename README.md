@@ -11,6 +11,8 @@ It consists of four services:
 
 It is prepared to demo routing features like A/B Testing, observability and resilience features by configureable delays and failures. 
 
+**Notice:** This is not an example of a good microservice architecture. It is for demonstration purposes of service mesh functionality only. In a real world application the functionality would probably be in a single service and would not need a service mesh.
+
 ## Installation
 
 ### Building the images from source
