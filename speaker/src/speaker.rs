@@ -2,10 +2,10 @@ use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Speaker {
-    id: u32,
-    full_name: String,
-    twitter: String,
-    bio: String,
+    pub id: u32,
+    pub full_name: String,
+    pub twitter: String,
+    pub bio: String,
     //image
 }
 

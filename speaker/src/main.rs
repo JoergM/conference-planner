@@ -20,6 +20,21 @@ async fn list(scope: web::Data<AppState>) -> impl Responder {
     HttpResponse::Ok().body(json)
 }
 
+#[get("/{id}")]
+async fn speaker_by_id(
+    web::Path(id): web::Path<u32>,
+    scope: web::Data<AppState>,
+) -> impl Responder {
+    let speaker = scope.speakers.iter().find(|speaker| speaker.id == id);
+
+    if speaker.is_some() {
+        let json = serde_json::to_string(&speaker).unwrap();
+        HttpResponse::Ok().body(json)
+    } else {
+        HttpResponse::NotFound().finish()
+    }
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     //reading Content from environment
@@ -64,6 +79,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .data(app_state.clone())
             .service(list)
+            .service(speaker_by_id)
     })
     .bind("127.0.0.1:8081")?
     .run()
