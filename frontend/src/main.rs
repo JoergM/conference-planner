@@ -41,7 +41,8 @@ async fn speakers(scope: web::Data<AppState<'_>>) -> impl Responder {
 
 #[get("/schedule/")]
 async fn schedule(scope: web::Data<AppState<'_>>) -> impl Responder {
-    let data = json!({});
+    let resp = reqwest::blocking::get("http://schedule:8083").unwrap();
+    let data: JsonValue = serde_json::from_str(&resp.text().unwrap()).unwrap();
 
     let hb = scope.hb.clone();
 
