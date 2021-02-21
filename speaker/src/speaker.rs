@@ -28,17 +28,24 @@ pub fn generate_examples() -> Vec<Speaker> {
         },
         
         Speaker {
-            id: 1,
+            id: 2,
             full_name: "Werner Heisenberg".into(),
             twitter: "@HeisenbergNotCooking".into(),
             bio:"Werner is a German theoretical physicist and one of the key pioneers of quantum mechanics. He published his work in 1925 in a breakthrough paper. In the subsequent series of papers with Max Born and Pascual Jordan, during the same year, this matrix formulation of quantum mechanics was substantially elaborated. He is known for the uncertainty principle, which he published in 1927. Heisenberg was awarded the 1932 Nobel Prize in Physics 'for the creation of quantum mechanics'".into()
         },
         
         Speaker {
-            id: 1,
+            id: 3,
             full_name: "Niels Bohr".into(),
             twitter: "@NielsHenrikDavidBohr".into(),
             bio:"Niels Bohr is a Danish physicist who made foundational contributions to understanding atomic structure and quantum theory, for which he received the Nobel Prize in Physics in 1922. Bohr was also a philosopher and a promoter of scientific research.".into()
+        },
+
+        Speaker {
+            id: 4,
+            full_name: "Erwin Schrödinger".into(),
+            twitter: "@TheManWithOrWithoutCat".into(),
+            bio:"Erwin is a Nobel Prize-winning Austrian-Irish physicist who developed a number of fundamental results in quantum theory: the Schrödinger equation provides a way to calculate the wave function of a system and how it changes dynamically in time.".into()
         },
         ];
 

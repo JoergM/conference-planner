@@ -14,7 +14,7 @@ struct AppState {
 }
 
 #[get("/")]
-async fn hello(scope: web::Data<AppState>) -> impl Responder {
+async fn list(scope: web::Data<AppState>) -> impl Responder {
     let json = serde_json::to_string(&scope.speakers).unwrap();
 
     HttpResponse::Ok().body(json)
@@ -63,7 +63,7 @@ async fn main() -> std::io::Result<()> {
             })
             .wrap(Logger::default())
             .data(app_state.clone())
-            .service(hello)
+            .service(list)
     })
     .bind("127.0.0.1:8081")?
     .run()

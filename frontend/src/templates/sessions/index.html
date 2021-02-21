@@ -48,58 +48,19 @@
             </h2>
         </div>
         <div class="container is-fluid my-5">
+            {{#each this}}
             <div class="box">
                 <h1 class="title is-4">
-                    Relativity is King <span class="tag">Keynote</span>
+                    {{title}} {{#if tag}}<span class="tag">{{tag}}</span>{{/if}}
                 </h1>
                 <p>
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Adipisci laudantium nostrum ullam
-                    perferendis ipsam reprehenderit laborum minima distinctio vel. Dignissimos dolores, natus dicta eum
-                    enim beatae aliquid. Minima, molestiae. Quam?
+                    {{description}}
                 </p>
                 <div class="subtitle mt-2">
-                    by <a href=""> Albert Einstein </a>
+                    by <a href=""> {{speaker_name}} </a>
                 </div>
             </div>
-            <div class="box">
-                <h1 class="title is-4">
-                    Uncertain about Uncertainty?
-                </h1>
-                <p>
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Adipisci laudantium nostrum ullam
-                    perferendis ipsam reprehenderit laborum minima distinctio vel. Dignissimos dolores, natus dicta eum
-                    enim beatae aliquid. Minima, molestiae. Quam?
-                </p>
-                <div class="subtitle mt-2">
-                    by <a href=""> Werner Heisenberg </a>
-                </div>
-            </div>
-            <div class="box">
-                <h1 class="title is-4">
-                    Welcome to Copenhagen
-                </h1>
-                <p>
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Adipisci laudantium nostrum ullam
-                    perferendis ipsam reprehenderit laborum minima distinctio vel. Dignissimos dolores, natus dicta eum
-                    enim beatae aliquid. Minima, molestiae. Quam?
-                </p>
-                <div class="subtitle mt-2">
-                    by <a href=""> Niels Bohr </a>
-                </div>
-            </div>
-            <div class="box">
-                <h1 class="title is-4">
-                    Everything you know about cats is wrong!
-                </h1>
-                <p>
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Adipisci laudantium nostrum ullam
-                    perferendis ipsam reprehenderit laborum minima distinctio vel. Dignissimos dolores, natus dicta eum
-                    enim beatae aliquid. Minima, molestiae. Quam?
-                </p>
-                <div class="subtitle mt-2">
-                    by <a href=""> Erwin Schrödinger</a>
-                </div>
-            </div>
+            {{/each}}
         </div>
     </section>
 

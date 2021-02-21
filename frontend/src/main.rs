@@ -51,7 +51,8 @@ async fn schedule(scope: web::Data<AppState<'_>>) -> impl Responder {
 
 #[get("/sessions/")]
 async fn sessions(scope: web::Data<AppState<'_>>) -> impl Responder {
-    let data = json!({});
+    let resp = reqwest::blocking::get("http://sessions:8082").unwrap();
+    let data: JsonValue = serde_json::from_str(&resp.text().unwrap()).unwrap();
 
     let hb = scope.hb.clone();
 
