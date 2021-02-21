@@ -3,6 +3,7 @@ use actix_web::{get, middleware::Logger, web, App, HttpResponse, HttpServer, Res
 use env_logger::Env;
 use rand::Rng;
 use serde::Serialize;
+use serde_json::{Map, Value};
 use std::env;
 use std::{thread, time};
 
@@ -20,6 +21,7 @@ struct SessionAnswer {
     title: String,
     tag: String,
     description: String,
+    speaker_id: u32,
     speaker_name: String,
     speaker_twitter: String,
 }
@@ -27,15 +29,29 @@ struct SessionAnswer {
 impl From<Session> for SessionAnswer {
     fn from(session: Session) -> Self {
         //todo implement request to speakers
+        let data = get_speaker_value(session.speaker_id);
+
+        let speaker_name = data["full_name"].as_str().unwrap_or("");
+        let speaker_twitter = data["twitter"].as_str().unwrap_or("");
+
         SessionAnswer {
             id: session.id,
             title: session.title,
             tag: session.tag,
             description: session.description,
-            speaker_name: "Speaker Name".into(),
-            speaker_twitter: "Speaker Twitter".into(),
+            speaker_id: session.speaker_id,
+            speaker_name: speaker_name.into(),
+            speaker_twitter: speaker_twitter.into(),
         }
     }
+}
+
+fn get_speaker_value(id: u32) -> Map<String, Value> {
+    let url = format!("http://speakers:8081/{}", id);
+    let resp = reqwest::blocking::get(&url).unwrap();
+    let data: Map<String, Value> = serde_json::from_str(&resp.text().unwrap()).unwrap();
+
+    data
 }
 
 #[get("/")]
