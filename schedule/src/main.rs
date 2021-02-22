@@ -28,26 +28,26 @@ struct ScheduleAnswer {
 
 impl From<ScheduleEntry> for ScheduleAnswer {
     fn from(entry: ScheduleEntry) -> Self {
-        //todo implement request to speakers
-        // let data = get_speaker_value(entry.speaker_id);
+        let data = get_session_value(entry.session_id);
 
-        // let speaker_name = data["full_name"].as_str().unwrap_or("");
-        // let speaker_twitter = data["twitter"].as_str().unwrap_or("");
+        let session_title = data["title"].as_str().unwrap_or("");
+        let session_tag = data["tag"].as_str().unwrap_or("");
+        let speaker_name = data["speaker_name"].as_str().unwrap_or("");
 
         ScheduleAnswer {
             id: entry.id,
             start_time: entry.start_time,
             end_time: entry.end_time,
             session_id: entry.session_id,
-            session_title: "Relativity is King".into(),
-            session_tag: "Keynote".into(),
-            speaker_name: "Albert Einstein".into(),
+            session_title: session_title.into(),
+            session_tag: session_tag.into(),
+            speaker_name: speaker_name.into(),
         }
     }
 }
 
-fn get_speaker_value(id: u32) -> Map<String, Value> {
-    let url = format!("http://speakers:8081/{}", id);
+fn get_session_value(id: u32) -> Map<String, Value> {
+    let url = format!("http://sessions:8082/{}", id);
     let resp = reqwest::blocking::get(&url).unwrap();
     let data: Map<String, Value> = serde_json::from_str(&resp.text().unwrap()).unwrap();
 

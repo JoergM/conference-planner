@@ -66,6 +66,22 @@ async fn list(scope: web::Data<AppState>) -> impl Responder {
     HttpResponse::Ok().body(json)
 }
 
+#[get("/{id}")]
+async fn session_by_id(
+    web::Path(id): web::Path<u32>,
+    scope: web::Data<AppState>,
+) -> impl Responder {
+    let session = scope.sessions.iter().find(|session| session.id == id);
+
+    if session.is_some() {
+        let session_answer = SessionAnswer::from(session.unwrap().clone());
+        let json = serde_json::to_string(&session_answer).unwrap();
+        HttpResponse::Ok().body(json)
+    } else {
+        HttpResponse::NotFound().finish()
+    }
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     //reading Content from environment
@@ -110,6 +126,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .data(app_state.clone())
             .service(list)
+            .service(session_by_id)
     })
     .bind("127.0.0.1:8082")?
     .run()
