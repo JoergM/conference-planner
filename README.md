@@ -15,12 +15,9 @@ It is prepared to demo routing features like A/B Testing, observability and resi
 
 ## Installation
 
-### Building the images from source
-
-### Pushing the images
+### Building and pushing the images from source
 
 ### Installing in Kubernetes 
-
 
 ## Usage
 
