@@ -17,6 +17,19 @@ It is prepared to demo routing features like A/B Testing, observability and resi
 
 ### Building and pushing the images from source
 
+To build all images and push them to a registry use:
+
+```
+./build_and_push.sh <registry_prefix>
+```
+The argument is a prefix used for tagging and specifying the registry where the images will be pushed. If you are pushing to Docker Hub this would be your username. 
+
+Make sure you logged in to the registry before starting the script. 
+
+#### Open Issues
+
+Currently this will only build single architecture images corresponding to the architecture used to build them. Please be aware when building on ARM CPUs.  
+
 ### Installing in Kubernetes 
 
 ## Usage
