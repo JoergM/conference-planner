@@ -30,11 +30,39 @@ Make sure you logged in to the registry before starting the script.
 
 Currently this will only build single architecture images corresponding to the architecture used to build them. Please be aware when building on ARM CPUs.  
 
-### Installing in Kubernetes 
+### Installing and testing in Kubernetes 
 
-## Usage
+In the folder kubernetes is a number of configurations for different scenarios
+
+#### basic.yaml
+
+This is the full setup of all services without any additional features like Traffic split or failures. 
+Apply using:
+
+```
+kubectl apply -f basic.yaml
+```
+
+To view the application from your local host use port-forward:
+
+```
+kubectl port-forward service/frontend-proxy 8080:8080
+```
+
+Then open http://localhost:8080 on your local browser.
+
+## Usage in advanced scenarios
 
 ### A/B Testing
+
+Inside the folder kubernetes is a configuration that includes a Traffic split for e.g. A/B Testing the frontend. It also installs two frontend versions. They use different environment variables to show different designs. 
+Apply using:
+
+```
+kubectl apply -f a_b.yaml
+```
+
+The Split is set to 50%. To test it just reload the webapplication or start the load-generator and observe the result in the service-mesh dashboard.
 
 ### Blue Green Release
 

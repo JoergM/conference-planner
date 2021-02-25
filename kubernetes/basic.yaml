@@ -158,3 +158,68 @@ spec:
     targetPort: 8083
   selector:
     run: schedule
+---
+
+# Frontend proxy to be able to use Traffic Splits on Frontend
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+  namespace: demo
+data:
+  nginx.conf: |
+    server {
+      listen 8080;
+      location / {
+          proxy_pass http://frontend:8080;
+      }
+    }
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: frontend-proxy
+  name: frontend-proxy
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: frontend-proxy
+  template:
+    metadata:
+      labels:
+        run: frontend-proxy
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d 
+          readOnly: true
+          name: nginx-conf
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: nginx-conf 
+          items:
+            - key: nginx.conf
+              path: default.conf
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-proxy
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    run: frontend-proxy
+---
