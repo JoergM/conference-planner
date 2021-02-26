@@ -7,23 +7,23 @@ metadata:
     linkerd.io/inject: enabled
 
 ---
-# Frontend - A
+# Frontend - original
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    run: frontend-a
-  name: frontend-a
+    run: frontend
+  name: frontend
   namespace: demo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      run: frontend-a
+      run: frontend
   template:
     metadata:
       labels:
-        run: frontend-a
+        run: frontend
     spec:
       containers:
       - image: joergm/frontend
@@ -33,8 +33,8 @@ apiVersion: v1
 kind: Service                           
 metadata:
   labels:
-    run: frontend-a
-  name: frontend-a
+    run: frontend
+  name: frontend
   namespace: demo
 spec:
   type: ClusterIP                        
@@ -43,7 +43,7 @@ spec:
     protocol: TCP
     targetPort: 8080
   selector:
-    run: frontend-a
+    run: frontend
 ---
 # Frontend - B
 apiVersion: apps/v1
@@ -82,6 +82,21 @@ spec:
     targetPort: 8080
   selector:
     run: frontend-b
+---
+# Traffic Split
+apiVersion: split.smi-spec.io/v1alpha1
+kind: TrafficSplit
+metadata:
+  name: a-b
+spec:
+  # The root service that clients use to connect to the destination application.
+  service: frontend
+  # Services inside the namespace with their own selectors, endpoints and configuration.
+  backends:
+  - service: frontend
+    weight: 50
+  - service: frontend-b
+    weight: 50
 ---
 # Speaker
 apiVersion: apps/v1
