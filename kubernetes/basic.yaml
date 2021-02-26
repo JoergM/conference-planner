@@ -148,7 +148,7 @@ kind: Service
 metadata:
   labels:
     run: schedule
-  name: schedules
+  name: schedule
   namespace: demo
 spec:
   type: ClusterIP                        
