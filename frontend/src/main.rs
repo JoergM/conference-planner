@@ -16,11 +16,14 @@ use handlebars::{Handlebars, JsonValue};
 #[derive(Debug, Clone)]
 struct AppState<'a> {
     hb: Arc<Handlebars<'a>>,
+    alternate_design: bool,
 }
 
 #[get("/")]
 async fn index(scope: web::Data<AppState<'_>>) -> impl Responder {
-    let data = json!({});
+    let data = json!({
+        "alternate_design": scope.alternate_design,
+    });
 
     let hb = scope.hb.clone();
 
@@ -31,7 +34,11 @@ async fn index(scope: web::Data<AppState<'_>>) -> impl Responder {
 #[get("/speakers/")]
 async fn speakers(scope: web::Data<AppState<'_>>) -> impl Responder {
     let resp = reqwest::blocking::get("http://speakers:8081").unwrap();
-    let data: JsonValue = serde_json::from_str(&resp.text().unwrap()).unwrap();
+    let speakers: JsonValue = serde_json::from_str(&resp.text().unwrap()).unwrap();
+    let data = json!({
+        "alternate_design": scope.alternate_design,
+        "speakers": speakers,
+    });
 
     let hb = scope.hb.clone();
 
@@ -42,7 +49,11 @@ async fn speakers(scope: web::Data<AppState<'_>>) -> impl Responder {
 #[get("/schedule/")]
 async fn schedule(scope: web::Data<AppState<'_>>) -> impl Responder {
     let resp = reqwest::blocking::get("http://schedule:8083").unwrap();
-    let data: JsonValue = serde_json::from_str(&resp.text().unwrap()).unwrap();
+    let schedule: JsonValue = serde_json::from_str(&resp.text().unwrap()).unwrap();
+    let data = json!({
+        "alternate_design": scope.alternate_design,
+        "schedule": schedule,
+    });
 
     let hb = scope.hb.clone();
 
@@ -53,7 +64,11 @@ async fn schedule(scope: web::Data<AppState<'_>>) -> impl Responder {
 #[get("/sessions/")]
 async fn sessions(scope: web::Data<AppState<'_>>) -> impl Responder {
     let resp = reqwest::blocking::get("http://sessions:8082").unwrap();
-    let data: JsonValue = serde_json::from_str(&resp.text().unwrap()).unwrap();
+    let sessions: JsonValue = serde_json::from_str(&resp.text().unwrap()).unwrap();
+    let data = json!({
+        "alternate_design": scope.alternate_design,
+        "sessions": sessions,
+    });
 
     let hb = scope.hb.clone();
 
@@ -66,8 +81,17 @@ async fn main() -> std::io::Result<()> {
     //reading Content from environment
     let failure_rate_env = env::var("FAILURE_RATE").unwrap_or("0".to_string());
     let failure_rate: i32 = failure_rate_env.parse().unwrap();
+
     let random_delay_env = env::var("RANDOM_DELAY_MAX").unwrap_or("1".to_string());
     let random_delay_max: u64 = random_delay_env.parse().unwrap();
+
+    let alternate_design_env = env::var("ALTERNATE_DESIGN");
+    let alternate_design;
+    if alternate_design_env.is_ok() {
+        alternate_design = true;
+    } else {
+        alternate_design = false;
+    }
 
     //register handlebars
     let mut hb = Handlebars::new();
@@ -81,7 +105,10 @@ async fn main() -> std::io::Result<()> {
         .unwrap();
 
     //initialize App_State
-    let app_state = AppState { hb: Arc::new(hb) };
+    let app_state = AppState {
+        hb: Arc::new(hb),
+        alternate_design,
+    };
 
     //Initialize Logger
     env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();

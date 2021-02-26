@@ -11,7 +11,9 @@
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+
+    <nav {{#if alternate_design}} class="navbar is-link" {{else}} class="navbar is-dark" {{/if}} role="navigation"
+        aria-label="main navigation">
         <div class="navbar-brand">
             <div class="block">
                 <a href="/" class="has-text-white">
@@ -40,7 +42,7 @@
     </nav>
 
     <!-- Body -->
-    <section class="hero is-primary is-large">
+    <section {{#if alternate_design}} class="hero is-dark is-large" {{else}} class="hero is-primary is-large" {{/if}}>
         <div class="hero-body">
             <h1 class="title is-1">
                 Conference Planner
