@@ -66,6 +66,9 @@ spec:
       containers:
       - image: joergm/frontend
         name: frontend
+        env:
+        - name: ALTERNATE_DESIGN
+          value: "true"
 ---
 apiVersion: v1 
 kind: Service                           

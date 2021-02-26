@@ -64,6 +64,8 @@ kubectl apply -f a_b.yaml
 
 The Split is set to 50%. To test it just reload the webapplication or start the load-generator and observe the result in the service-mesh dashboard.
 
+The frontend container reacts on setting an environment variable `ALTERNATE_DESIGN`. If that is set, some colors will change so that the alternate version is visible.
+
 ### Blue Green Release
 
 ### Canary Release
