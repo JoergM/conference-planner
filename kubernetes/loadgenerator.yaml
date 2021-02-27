@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: loadgenerator
+  name: loadgenerator
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: loadgenerator
+  template:
+    metadata:
+      labels:
+        run: loadgenerator
+    spec:
+      containers:
+      - image: joergm/loadgenerator
+        name: loadgenerator
+        env:
+        - name: RUST_LOG
+          value: "info"

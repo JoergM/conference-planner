@@ -28,5 +28,6 @@ build_and_push_module ${DOCKER_PREFIX} frontend
 build_and_push_module ${DOCKER_PREFIX} schedule
 build_and_push_module ${DOCKER_PREFIX} speaker
 build_and_push_module ${DOCKER_PREFIX} session
+build_and_push_module ${DOCKER_PREFIX} loadgenerator
 
 
