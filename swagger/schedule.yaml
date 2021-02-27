@@ -1,0 +1,34 @@
+openapi: "3.0.3"
+info:
+  title: schedule
+  version: "1.0"
+servers:
+  - url: "http://schedule:8081/"
+paths:
+  /:
+    get:
+      description: Getting all schedule items
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    start_time:
+                      type: string
+                    end_time:
+                      type: string
+                    session_id:
+                      type: integer
+                    session_title:
+                      type: string
+                    session_tag:
+                      type: string
+                    speaker_name:
+                      type: string
