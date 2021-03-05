@@ -95,9 +95,9 @@ spec:
   service: frontend
   backends:
   - service: frontend
-    weight: 50
+    weight: 90
   - service: frontend-b
-    weight: 50
+    weight: 10
 ---
 # Speaker
 apiVersion: apps/v1

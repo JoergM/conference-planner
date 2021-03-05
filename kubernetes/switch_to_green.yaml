@@ -1,0 +1,29 @@
+# Traffic Split
+apiVersion: split.smi-spec.io/v1alpha1
+kind: TrafficSplit
+metadata:
+  name: blue-green
+spec:
+  service: frontend
+  backends:
+  - service: frontend
+    weight: 0 
+  - service: frontend-b
+    weight: 100              # <- Traffic Split priority reversed 
+---
+# seperate service for tests of offline version
+apiVersion: v1 
+kind: Service                           
+metadata:
+  labels:
+    run: test-service 
+  name: test-service
+  namespace: demo
+spec:
+  type: ClusterIP                        
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    run: frontend  # <- Change to other service label

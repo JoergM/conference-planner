@@ -90,14 +90,31 @@ spec:
 apiVersion: split.smi-spec.io/v1alpha1
 kind: TrafficSplit
 metadata:
-  name: a-b
+  name: blue-green
 spec:
   service: frontend
   backends:
   - service: frontend
-    weight: 50
+    weight: 100
   - service: frontend-b
-    weight: 50
+    weight: 0
+---
+# seperate service for tests of offline version
+apiVersion: v1 
+kind: Service                           
+metadata:
+  labels:
+    run: test-service 
+  name: test-service
+  namespace: demo
+spec:
+  type: ClusterIP                        
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    run: frontend-b
 ---
 # Speaker
 apiVersion: apps/v1
