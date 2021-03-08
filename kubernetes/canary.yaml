@@ -26,22 +26,22 @@ spec:
         run: frontend
     spec:
       containers:
-      - image: joergm/frontend
-        name: frontend
+        - image: joergm/frontend
+          name: frontend
 ---
-apiVersion: v1 
-kind: Service                           
+apiVersion: v1
+kind: Service
 metadata:
   labels:
     run: frontend
   name: frontend
   namespace: demo
 spec:
-  type: ClusterIP                        
+  type: ClusterIP
   ports:
-  - port: 8080
-    protocol: TCP
-    targetPort: 8080
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
   selector:
     run: frontend
 ---
@@ -64,25 +64,25 @@ spec:
         run: frontend-b
     spec:
       containers:
-      - image: joergm/frontend
-        name: frontend
-        env:
-        - name: ALTERNATE_DESIGN
-          value: "true"
+        - image: joergm/frontend
+          name: frontend
+          env:
+            - name: ALTERNATE_DESIGN
+              value: "true"
 ---
-apiVersion: v1 
-kind: Service                           
+apiVersion: v1
+kind: Service
 metadata:
   labels:
     run: frontend-b
   name: frontend-b
   namespace: demo
 spec:
-  type: ClusterIP                        
+  type: ClusterIP
   ports:
-  - port: 8080
-    protocol: TCP
-    targetPort: 8080
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
   selector:
     run: frontend-b
 ---
@@ -90,14 +90,14 @@ spec:
 apiVersion: split.smi-spec.io/v1alpha1
 kind: TrafficSplit
 metadata:
-  name: a-b
+  name: canary
 spec:
   service: frontend
   backends:
-  - service: frontend
-    weight: 90
-  - service: frontend-b
-    weight: 10
+    - service: frontend
+      weight: 90
+    - service: frontend-b
+      weight: 10
 ---
 # Speaker
 apiVersion: apps/v1
@@ -118,22 +118,22 @@ spec:
         run: speaker
     spec:
       containers:
-      - image: joergm/speaker
-        name: speaker
+        - image: joergm/speaker
+          name: speaker
 ---
-apiVersion: v1 
-kind: Service                           
+apiVersion: v1
+kind: Service
 metadata:
   labels:
     run: speaker
   name: speakers
   namespace: demo
 spec:
-  type: ClusterIP                        
+  type: ClusterIP
   ports:
-  - port: 8081
-    protocol: TCP
-    targetPort: 8081
+    - port: 8081
+      protocol: TCP
+      targetPort: 8081
   selector:
     run: speaker
 ---
@@ -156,22 +156,22 @@ spec:
         run: session
     spec:
       containers:
-      - image: joergm/session
-        name: session
+        - image: joergm/session
+          name: session
 ---
-apiVersion: v1 
-kind: Service                           
+apiVersion: v1
+kind: Service
 metadata:
   labels:
     run: session
   name: sessions
   namespace: demo
 spec:
-  type: ClusterIP                        
+  type: ClusterIP
   ports:
-  - port: 8082
-    protocol: TCP
-    targetPort: 8082
+    - port: 8082
+      protocol: TCP
+      targetPort: 8082
   selector:
     run: session
 ---
@@ -194,26 +194,25 @@ spec:
         run: schedule
     spec:
       containers:
-      - image: joergm/schedule
-        name: schedule
+        - image: joergm/schedule
+          name: schedule
 ---
-apiVersion: v1 
-kind: Service                           
+apiVersion: v1
+kind: Service
 metadata:
   labels:
     run: schedule
   name: schedule
   namespace: demo
 spec:
-  type: ClusterIP                        
+  type: ClusterIP
   ports:
-  - port: 8083
-    protocol: TCP
-    targetPort: 8083
+    - port: 8083
+      protocol: TCP
+      targetPort: 8083
   selector:
     run: schedule
 ---
-
 # Frontend proxy to be able to use Traffic Splits on Frontend
 apiVersion: v1
 kind: ConfigMap
@@ -248,21 +247,21 @@ spec:
         run: frontend-proxy
     spec:
       containers:
-      - name: nginx
-        image: nginx
-        ports:
-        - containerPort: 8080
-        volumeMounts:
-        - mountPath: /etc/nginx/conf.d 
-          readOnly: true
-          name: nginx-conf
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d
+              readOnly: true
+              name: nginx-conf
       volumes:
-      - name: nginx-conf
-        configMap:
-          name: nginx-conf 
-          items:
-            - key: nginx.conf
-              path: default.conf
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf
+            items:
+              - key: nginx.conf
+                path: default.conf
 
 ---
 apiVersion: v1
@@ -272,8 +271,9 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 8080
-    targetPort: 8080
+    - port: 8080
+      targetPort: 8080
   selector:
     run: frontend-proxy
 ---
+
