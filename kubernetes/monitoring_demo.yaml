@@ -1,0 +1,310 @@
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo
+  annotations:
+    linkerd.io/inject: enabled
+
+---
+# Frontend
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: frontend
+  name: frontend
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: frontend
+  template:
+    metadata:
+      labels:
+        run: frontend
+    spec:
+      containers:
+        - image: joergm/frontend
+          name: frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: frontend
+  name: frontend
+  namespace: demo
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    run: frontend
+---
+# Speaker
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: speaker
+  name: speaker
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: speaker
+  template:
+    metadata:
+      labels:
+        run: speaker
+    spec:
+      containers:
+        - image: joergm/speaker
+          name: speaker
+          env:
+            - name: FAILURE_RATE
+              value: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: speaker
+  name: speakers
+  namespace: demo
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8081
+      protocol: TCP
+      targetPort: 8081
+  selector:
+    run: speaker
+---
+# Session
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: session
+  name: session
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: session
+  template:
+    metadata:
+      labels:
+        run: session
+    spec:
+      containers:
+        - image: joergm/session
+          name: session
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: session
+  name: sessions
+  namespace: demo
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8082
+      protocol: TCP
+      targetPort: 8082
+  selector:
+    run: session
+---
+# Schedule
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: schedule
+  name: schedule
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: schedule
+  template:
+    metadata:
+      labels:
+        run: schedule
+    spec:
+      containers:
+        - image: joergm/schedule
+          name: schedule
+          env:
+            - name: RANDOM_DELAY_MAX
+              value: 1000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: schedule
+  name: schedule
+  namespace: demo
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8083
+      protocol: TCP
+      targetPort: 8083
+  selector:
+    run: schedule
+---
+# Frontend proxy to be able to use Traffic Splits on Frontend
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+  namespace: demo
+data:
+  nginx.conf: |
+    server {
+      listen 8080;
+      location / {
+          proxy_pass http://frontend:8080;
+      }
+    }
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: frontend-proxy
+  name: frontend-proxy
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: frontend-proxy
+  template:
+    metadata:
+      labels:
+        run: frontend-proxy
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d
+              readOnly: true
+              name: nginx-conf
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf
+            items:
+              - key: nginx.conf
+                path: default.conf
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-proxy
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    run: frontend-proxy
+---
+# Service Profiles
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  creationTimestamp: null
+  name: speakers.demo.svc.cluster.local
+  namespace: demo
+spec:
+  routes:
+    - condition:
+        method: GET
+        pathRegex: /
+      name: GET /
+      responseClasses:
+        - condition:
+            status:
+              max: 200
+              min: 200
+    - condition:
+        method: GET
+        pathRegex: /[^/]*
+      name: GET /{id}
+      responseClasses:
+        - condition:
+            status:
+              max: 200
+              min: 200
+        - condition:
+            status:
+              max: 404
+              min: 404
+---
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  creationTimestamp: null
+  name: sessions.demo.svc.cluster.local
+  namespace: demo
+spec:
+  routes:
+    - condition:
+        method: GET
+        pathRegex: /
+      name: GET /
+      responseClasses:
+        - condition:
+            status:
+              max: 200
+              min: 200
+    - condition:
+        method: GET
+        pathRegex: /[^/]*
+      name: GET /{id}
+      responseClasses:
+        - condition:
+            status:
+              max: 200
+              min: 200
+        - condition:
+            status:
+              max: 404
+              min: 404
+---
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  creationTimestamp: null
+  name: schedule.demo.svc.cluster.local
+  namespace: demo
+spec:
+  routes:
+    - condition:
+        method: GET
+        pathRegex: /
+      name: GET /
+      responseClasses:
+        - condition:
+            status:
+              max: 200
+              min: 200
