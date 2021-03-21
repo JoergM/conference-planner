@@ -68,7 +68,7 @@ spec:
           name: speaker
           env:
             - name: FAILURE_RATE
-              value: 5
+              value: "5" # <- 5% of the calls will fail with 503
 ---
 apiVersion: v1
 kind: Service
@@ -147,7 +147,7 @@ spec:
           name: schedule
           env:
             - name: RANDOM_DELAY_MAX
-              value: 1000
+              value: "1000" #<- There is a random delay of up to 1s in answers
 ---
 apiVersion: v1
 kind: Service
