@@ -76,6 +76,16 @@ The frontend container reacts on setting an environment variable `ALTERNATE_DESI
 
 ### Open Telemetry
 
+Testing locally:
+
+Run a local jaeger instance:
+`docker run -d -p6831:6831/udp -p6832:6832/udp -p16686:16686 -p14268:14268 jaegertracing/all-in-one:latest`
+
+Start the demo app using:
+`./run-all.sh`
+
+
+
 ## Running locally for development
 
 ### Install Rust and Cargo

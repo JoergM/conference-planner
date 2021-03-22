@@ -13,6 +13,8 @@ use std::{thread, time};
 
 use handlebars::{Handlebars, JsonValue};
 
+use actix_web_opentelemetry::RequestTracing;
+
 #[derive(Debug, Clone)]
 struct AppState<'a> {
     hb: Arc<Handlebars<'a>>,
@@ -92,6 +94,14 @@ async fn main() -> std::io::Result<()> {
     } else {
         alternate_design = false;
     }
+    // register opentelemetry pipeline and collector
+
+    // let collector_env = env::var("OC_AGENT_HOST").unwrap_or("localhost:14263".to_string());
+    let (_tracer, _uninstall) = opentelemetry_jaeger::new_pipeline()
+        .with_service_name("Frontend")
+        .with_collector_endpoint("http://localhost:14268/api/traces")
+        .install()
+        .unwrap();
 
     //register handlebars
     let mut hb = Handlebars::new();
@@ -138,6 +148,7 @@ async fn main() -> std::io::Result<()> {
                     Ok(service_res)
                 }
             })
+            .wrap(RequestTracing::new())
             .wrap(Logger::default())
             .data(app_state.clone())
             .service(index)
