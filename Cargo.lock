@@ -2047,8 +2047,11 @@ version = "0.1.0"
 dependencies = [
  "actix-service",
  "actix-web",
+ "actix-web-opentelemetry",
  "env_logger",
  "handlebars",
+ "opentelemetry",
+ "opentelemetry-jaeger",
  "rand 0.8.3",
  "serde",
  "serde_json",

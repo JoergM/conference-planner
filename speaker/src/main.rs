@@ -8,6 +8,8 @@ use std::{thread, time};
 mod speaker;
 use speaker::*;
 
+use actix_web_opentelemetry::RequestTracing;
+
 #[derive(Debug, Clone)]
 struct AppState {
     speakers: Vec<Speaker>,
@@ -43,6 +45,15 @@ async fn main() -> std::io::Result<()> {
     let random_delay_env = env::var("RANDOM_DELAY_MAX").unwrap_or("1".to_string());
     let random_delay_max: u64 = random_delay_env.parse().unwrap();
 
+    // register opentelemetry collector
+    let collector_env =
+        env::var("OTEL_EXPORTER_JAEGER_ENDPOINT").unwrap_or("localhost:14268".to_string());
+    let (_tracer, _uninstall) = opentelemetry_jaeger::new_pipeline()
+        .with_service_name("Speakers")
+        .with_collector_endpoint(format!("http://{}/api/traces", collector_env))
+        .install()
+        .unwrap();
+
     //initialize App_State
     let app_state = AppState {
         speakers: speaker::generate_examples(),
@@ -76,6 +87,7 @@ async fn main() -> std::io::Result<()> {
                     Ok(service_res)
                 }
             })
+            .wrap(RequestTracing::new())
             .wrap(Logger::default())
             .data(app_state.clone())
             .service(list)

@@ -14,6 +14,8 @@ use std::{thread, time};
 use handlebars::{Handlebars, JsonValue};
 
 use actix_web_opentelemetry::RequestTracing;
+use opentelemetry::global;
+use opentelemetry::HeaderInjector;
 
 #[derive(Debug, Clone)]
 struct AppState<'a> {
@@ -35,6 +37,13 @@ async fn index(scope: web::Data<AppState<'_>>) -> impl Responder {
 
 #[get("/speakers/")]
 async fn speakers(scope: web::Data<AppState<'_>>) -> impl Responder {
+    // reqwest client bauen, um header zu setzen
+    // inject nutzen, damit nutzt man den aktuellen Context
+    // global::get_text_map_propagator(|propagator| {
+    // propagator.inject(&mut HeaderInjector(&mut req.headers_mut().unwrap()))
+    // });
+    //todo wahrscheinlich muss ich meinen eigenen Injector für den ReqwestBuilder bauen
+    // eventuell auch über reqwest HeaderMap
     let resp = reqwest::blocking::get("http://speakers:8081").unwrap();
     let speakers: JsonValue = serde_json::from_str(&resp.text().unwrap()).unwrap();
     let data = json!({
@@ -80,13 +89,15 @@ async fn sessions(scope: web::Data<AppState<'_>>) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    //reading Content from environment
+    //read failure rate
     let failure_rate_env = env::var("FAILURE_RATE").unwrap_or("0".to_string());
     let failure_rate: i32 = failure_rate_env.parse().unwrap();
 
+    //read Random Delay
     let random_delay_env = env::var("RANDOM_DELAY_MAX").unwrap_or("1".to_string());
     let random_delay_max: u64 = random_delay_env.parse().unwrap();
 
+    //setting alternate design
     let alternate_design_env = env::var("ALTERNATE_DESIGN");
     let alternate_design;
     if alternate_design_env.is_ok() {
@@ -94,12 +105,13 @@ async fn main() -> std::io::Result<()> {
     } else {
         alternate_design = false;
     }
-    // register opentelemetry pipeline and collector
 
-    // let collector_env = env::var("OC_AGENT_HOST").unwrap_or("localhost:14263".to_string());
+    // register opentelemetry collector
+    let collector_env =
+        env::var("OTEL_EXPORTER_JAEGER_ENDPOINT").unwrap_or("localhost:14268".to_string());
     let (_tracer, _uninstall) = opentelemetry_jaeger::new_pipeline()
         .with_service_name("Frontend")
-        .with_collector_endpoint("http://localhost:14268/api/traces")
+        .with_collector_endpoint(format!("http://{}/api/traces", collector_env))
         .install()
         .unwrap();
 
