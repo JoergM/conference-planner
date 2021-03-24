@@ -13,9 +13,8 @@ use std::{thread, time};
 
 use handlebars::{Handlebars, JsonValue};
 
-use actix_web_opentelemetry::RequestTracing;
-use opentelemetry::global;
-use opentelemetry::HeaderInjector;
+use actix_web_opentelemetry::{ClientExt, RequestTracing};
+use opentelemetry::Context;
 
 #[derive(Debug, Clone)]
 struct AppState<'a> {
@@ -37,15 +36,17 @@ async fn index(scope: web::Data<AppState<'_>>) -> impl Responder {
 
 #[get("/speakers/")]
 async fn speakers(scope: web::Data<AppState<'_>>) -> impl Responder {
-    // reqwest client bauen, um header zu setzen
-    // inject nutzen, damit nutzt man den aktuellen Context
-    // global::get_text_map_propagator(|propagator| {
-    // propagator.inject(&mut HeaderInjector(&mut req.headers_mut().unwrap()))
-    // });
-    //todo wahrscheinlich muss ich meinen eigenen Injector für den ReqwestBuilder bauen
-    // eventuell auch über reqwest HeaderMap
-    let resp = reqwest::blocking::get("http://speakers:8081").unwrap();
-    let speakers: JsonValue = serde_json::from_str(&resp.text().unwrap()).unwrap();
+    let client = awc::Client::default();
+    let mut resp = client
+        .get("http://speakers:8081")
+        .trace_request_with_context(Context::current())
+        .send()
+        .await
+        .unwrap();
+    let body = resp.body().await.unwrap();
+    let body_text = String::from_utf8(body.to_vec()).unwrap();
+
+    let speakers: JsonValue = serde_json::from_str(&body_text).unwrap();
     let data = json!({
         "alternate_design": scope.alternate_design,
         "speakers": speakers,

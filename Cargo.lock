@@ -685,6 +685,7 @@ dependencies = [
  "actix-service",
  "actix-web",
  "actix-web-opentelemetry",
+ "awc",
  "env_logger",
  "handlebars",
  "opentelemetry",
