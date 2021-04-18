@@ -680,7 +680,7 @@ dependencies = [
 
 [[package]]
 name = "frontend"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "actix-service",
  "actix-web",
@@ -1866,12 +1866,16 @@ dependencies = [
 
 [[package]]
 name = "schedule"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "actix-service",
  "actix-web",
+ "actix-web-opentelemetry",
+ "awc",
  "env_logger",
  "handlebars",
+ "opentelemetry",
+ "opentelemetry-jaeger",
  "rand 0.8.3",
  "reqwest",
  "serde",
@@ -1967,16 +1971,21 @@ dependencies = [
 
 [[package]]
 name = "session"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "actix-service",
  "actix-web",
+ "actix-web-opentelemetry",
+ "awc",
  "env_logger",
  "handlebars",
+ "opentelemetry",
+ "opentelemetry-jaeger",
  "rand 0.8.3",
  "reqwest",
  "serde",
  "serde_json",
+ "tokio 0.2.25",
 ]
 
 [[package]]
@@ -2044,7 +2053,7 @@ dependencies = [
 
 [[package]]
 name = "speaker"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "actix-service",
  "actix-web",
