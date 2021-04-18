@@ -21,6 +21,18 @@ struct AppState<'a> {
     hb: Arc<Handlebars<'a>>,
     alternate_design: bool,
 }
+async fn get_body_with_tracing(url: &str) -> String {
+    let client = awc::Client::default();
+    let mut resp = client
+        .get(url)
+        .trace_request_with_context(Context::current())
+        .send()
+        .await
+        .unwrap();
+    let body = resp.body().await.unwrap();
+    let body_text = String::from_utf8(body.to_vec()).unwrap();
+    body_text
+}
 
 #[get("/")]
 async fn index(scope: web::Data<AppState<'_>>) -> impl Responder {
@@ -36,15 +48,7 @@ async fn index(scope: web::Data<AppState<'_>>) -> impl Responder {
 
 #[get("/speakers/")]
 async fn speakers(scope: web::Data<AppState<'_>>) -> impl Responder {
-    let client = awc::Client::default();
-    let mut resp = client
-        .get("http://speakers:8081")
-        .trace_request_with_context(Context::current())
-        .send()
-        .await
-        .unwrap();
-    let body = resp.body().await.unwrap();
-    let body_text = String::from_utf8(body.to_vec()).unwrap();
+    let body_text = get_body_with_tracing("http://speakers:8081").await;
 
     let speakers: JsonValue = serde_json::from_str(&body_text).unwrap();
     let data = json!({
@@ -60,8 +64,9 @@ async fn speakers(scope: web::Data<AppState<'_>>) -> impl Responder {
 
 #[get("/schedule/")]
 async fn schedule(scope: web::Data<AppState<'_>>) -> impl Responder {
-    let resp = reqwest::blocking::get("http://schedule:8083").unwrap();
-    let schedule: JsonValue = serde_json::from_str(&resp.text().unwrap()).unwrap();
+    let body_text = get_body_with_tracing("http://schedule:8083").await;
+
+    let schedule: JsonValue = serde_json::from_str(&body_text).unwrap();
     let data = json!({
         "alternate_design": scope.alternate_design,
         "schedule": schedule,
@@ -75,8 +80,8 @@ async fn schedule(scope: web::Data<AppState<'_>>) -> impl Responder {
 
 #[get("/sessions/")]
 async fn sessions(scope: web::Data<AppState<'_>>) -> impl Responder {
-    let resp = reqwest::blocking::get("http://sessions:8082").unwrap();
-    let sessions: JsonValue = serde_json::from_str(&resp.text().unwrap()).unwrap();
+    let body_text = get_body_with_tracing("http://sessions:8082").await;
+    let sessions: JsonValue = serde_json::from_str(&body_text).unwrap();
     let data = json!({
         "alternate_design": scope.alternate_design,
         "sessions": sessions,
