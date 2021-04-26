@@ -4,7 +4,7 @@ use env_logger::Env;
 use rand::Rng;
 use serde::Serialize;
 use serde_json::{Map, Value};
-use std::env;
+use std::{env, time::Duration};
 use std::{thread, time};
 
 mod session;
@@ -22,6 +22,7 @@ async fn get_body_with_tracing(url: &str) -> String {
     let client = awc::Client::default();
     let mut resp = client
         .get(url)
+        .timeout(Duration::from_secs(10))
         .trace_request_with_context(Context::current())
         .send()
         .await

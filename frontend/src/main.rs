@@ -8,7 +8,7 @@ use actix_web::{
 use env_logger::Env;
 use rand::Rng;
 use serde_json::json;
-use std::{env, sync::Arc};
+use std::{env, sync::Arc, time::Duration};
 use std::{thread, time};
 
 use handlebars::{Handlebars, JsonValue};
@@ -25,6 +25,7 @@ async fn get_body_with_tracing(url: &str) -> String {
     let client = awc::Client::default();
     let mut resp = client
         .get(url)
+        .timeout(Duration::from_secs(10))
         .trace_request_with_context(Context::current())
         .send()
         .await

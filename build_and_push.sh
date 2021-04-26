@@ -12,9 +12,10 @@ MODULE_NAME=$2
 cd ${MODULE_NAME}
 MODULE_VERSION=$(cargo pkgid | cut -d# -f2 | cut -d: -f2)
 
-docker build -t ${DOCKER_PREFIX}/${MODULE_NAME}:${MODULE_VERSION} .
+docker build -t ${DOCKER_PREFIX}/${MODULE_NAME}:${MODULE_VERSION} . || error "Error building Image"
 docker tag ${DOCKER_PREFIX}/${MODULE_NAME}:${MODULE_VERSION} ${DOCKER_PREFIX}/${MODULE_NAME}:latest
-docker push ${DOCKER_PREFIX}/${MODULE_NAME} 
+docker push ${DOCKER_PREFIX}/${MODULE_NAME}:${MODULE_VERSION} || error "Error pushing new version"
+docker push ${DOCKER_PREFIX}/${MODULE_NAME} || error "Error pushing latest"
 
 cd ..
 }
