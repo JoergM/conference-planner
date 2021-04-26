@@ -26,12 +26,12 @@ pub fn generate_examples() -> Vec<Speaker> {
             development of quantum theory. His intellectual achievements and originality resulted 
             in 'Einstein' becoming synonymous with 'genius'".into()
         },
-        
+
         Speaker {
-            id: 2,
-            full_name: "Werner Heisenberg".into(),
-            twitter: "@HeisenbergNotCooking".into(),
-            bio:"Werner is a German theoretical physicist and one of the key pioneers of quantum mechanics. He published his work in 1925 in a breakthrough paper. In the subsequent series of papers with Max Born and Pascual Jordan, during the same year, this matrix formulation of quantum mechanics was substantially elaborated. He is known for the uncertainty principle, which he published in 1927. Heisenberg was awarded the 1932 Nobel Prize in Physics 'for the creation of quantum mechanics'".into()
+            id: 5,
+            full_name: "Marie Curie".into(),
+            twitter: "@MarieCurie".into(),
+            bio:"Marie is a physicist and chemist who conducted pioneering research on radioactivity. As the first of the Curie family legacy of five Nobel Prizes, she was the first woman to win a Nobel Prize, the first and the only woman to win the Nobel Prize twice, and the only person to win the Nobel Prize in two scientific fields. She was the first woman to become a professor at the University of Paris in 1906.".into(),
         },
         
         Speaker {
@@ -46,6 +46,13 @@ pub fn generate_examples() -> Vec<Speaker> {
             full_name: "Erwin Schrödinger".into(),
             twitter: "@TheManWithOrWithoutCat".into(),
             bio:"Erwin is a Nobel Prize-winning Austrian-Irish physicist who developed a number of fundamental results in quantum theory: the Schrödinger equation provides a way to calculate the wave function of a system and how it changes dynamically in time.".into()
+        },
+
+        Speaker {
+            id: 2,
+            full_name: "Werner Heisenberg".into(),
+            twitter: "@HeisenbergNotCooking".into(),
+            bio:"Werner is a German theoretical physicist and one of the key pioneers of quantum mechanics. He published his work in 1925 in a breakthrough paper. In the subsequent series of papers with Max Born and Pascual Jordan, during the same year, this matrix formulation of quantum mechanics was substantially elaborated. He is known for the uncertainty principle, which he published in 1927. Heisenberg was awarded the 1932 Nobel Prize in Physics 'for the creation of quantum mechanics'".into()
         },
         ];
 
