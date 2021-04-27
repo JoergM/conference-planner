@@ -1,6 +1,7 @@
 use actix_service::Service;
 use actix_web::{get, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
+use opentelemetry::{global, sdk::propagation::TraceContextPropagator};
 use rand::Rng;
 use std::env;
 use std::{thread, time};
@@ -48,6 +49,7 @@ async fn main() -> std::io::Result<()> {
     // register opentelemetry collector
     let collector_env =
         env::var("OTEL_EXPORTER_JAEGER_ENDPOINT").unwrap_or("localhost:14268".to_string());
+    global::set_text_map_propagator(TraceContextPropagator::new());
     let (_tracer, _uninstall) = opentelemetry_jaeger::new_pipeline()
         .with_service_name("Speakers")
         .with_collector_endpoint(format!("http://{}/api/traces", collector_env))

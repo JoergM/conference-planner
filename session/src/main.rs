@@ -11,7 +11,7 @@ mod session;
 use session::*;
 
 use actix_web_opentelemetry::{ClientExt, RequestTracing};
-use opentelemetry::Context;
+use opentelemetry::{global, sdk::propagation::TraceContextPropagator, Context};
 
 #[derive(Debug, Clone)]
 struct AppState {
@@ -116,6 +116,7 @@ async fn main() -> std::io::Result<()> {
     // register opentelemetry collector
     let collector_env =
         env::var("OTEL_EXPORTER_JAEGER_ENDPOINT").unwrap_or("localhost:14268".to_string());
+    global::set_text_map_propagator(TraceContextPropagator::new());
     let (_tracer, _uninstall) = opentelemetry_jaeger::new_pipeline()
         .with_service_name("Session")
         .with_collector_endpoint(format!("http://{}/api/traces", collector_env))
