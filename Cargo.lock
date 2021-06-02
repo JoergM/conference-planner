@@ -680,7 +680,7 @@ dependencies = [
 
 [[package]]
 name = "frontend"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "actix-service",
  "actix-web",
@@ -1165,7 +1165,7 @@ checksum = "7fb9b38af92608140b86b693604b9ffcc5824240a484d1ecd4795bacb2fe88f3"
 
 [[package]]
 name = "loadgenerator"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "env_logger",
  "log",
@@ -1866,7 +1866,7 @@ dependencies = [
 
 [[package]]
 name = "schedule"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "actix-service",
  "actix-web",
@@ -1971,7 +1971,7 @@ dependencies = [
 
 [[package]]
 name = "session"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "actix-service",
  "actix-web",
@@ -2053,7 +2053,7 @@ dependencies = [
 
 [[package]]
 name = "speaker"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "actix-service",
  "actix-web",
