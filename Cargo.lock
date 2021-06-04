@@ -530,6 +530,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ea221b5284a47e40033bf9b66f35f984ec0ea2931eb03505246cd27a963f981b"
 
 [[package]]
+name = "cp-common"
+version = "0.1.0"
+dependencies = [
+ "actix-web",
+ "futures",
+ "rand 0.8.3",
+]
+
+[[package]]
 name = "cpuid-bool"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1977,6 +1986,7 @@ dependencies = [
  "actix-web",
  "actix-web-opentelemetry",
  "awc",
+ "cp-common",
  "env_logger",
  "handlebars",
  "opentelemetry",

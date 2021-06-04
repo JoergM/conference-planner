@@ -20,3 +20,4 @@ opentelemetry-jaeger = { version = "0.11.0", features = ["collector_client", "re
 actix-web-opentelemetry = "0.10.0"
 awc = "2.0.3" 
 tokio = "*"
+cp-common = { path = "../cp-common" }

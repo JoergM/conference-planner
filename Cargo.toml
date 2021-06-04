@@ -4,4 +4,5 @@ members = ["frontend",
     "session",
     "speaker",
     "loadgenerator",
+    "cp-common",
 ]
