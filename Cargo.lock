@@ -535,6 +535,8 @@ version = "0.1.0"
 dependencies = [
  "actix-web",
  "futures",
+ "opentelemetry",
+ "opentelemetry-jaeger",
  "rand 0.8.3",
 ]
 

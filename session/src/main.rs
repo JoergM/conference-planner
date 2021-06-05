@@ -1,24 +1,24 @@
-use actix_service::Service;
 use actix_web::{get, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
+use cp_common::delay::DelayInjector;
 use cp_common::failure::FailureInjector;
+use cp_common::tracing::init_jaeger_endpoint;
 use env_logger::Env;
-use rand::Rng;
 use serde::Serialize;
 use serde_json::{Map, Value};
-use std::{env, time::Duration};
-use std::{thread, time};
+use std::{time::Duration};
 
 mod session;
 use session::*;
 
 use actix_web_opentelemetry::{ClientExt, RequestTracing};
-use opentelemetry::{global, sdk::propagation::TraceContextPropagator, Context};
+use opentelemetry::{Context};
 
 #[derive(Debug, Clone)]
 struct AppState {
     sessions: Vec<Session>,
 }
 
+//todo move to common
 async fn get_body_with_tracing(url: &str) -> String {
     let client = awc::Client::default();
     let mut resp = client
@@ -103,25 +103,13 @@ async fn session_by_id(
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    //reading Content from environment
-    let random_delay_env = env::var("RANDOM_DELAY_MAX").unwrap_or("1".to_string());
-    let random_delay_max: u64 = random_delay_env.parse().unwrap();
-
     //initialize App_State
     let app_state = AppState {
         sessions: session::generate_examples(),
     };
 
     // register opentelemetry collector
-    //todo move to common
-    let collector_env =
-        env::var("OTEL_EXPORTER_JAEGER_ENDPOINT").unwrap_or("localhost:14268".to_string());
-    global::set_text_map_propagator(TraceContextPropagator::new());
-    let (_tracer, _uninstall) = opentelemetry_jaeger::new_pipeline()
-        .with_service_name("Session")
-        .with_collector_endpoint(format!("http://{}/api/traces", collector_env))
-        .install()
-        .unwrap();
+    init_jaeger_endpoint();
 
     //Initialize Logger
     env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
@@ -129,16 +117,7 @@ async fn main() -> std::io::Result<()> {
     //todo move to common
     HttpServer::new(move || {
         App::new()
-            .wrap_fn(move |req, srv| {
-                let fut = srv.call(req);
-                let mut rng = rand::thread_rng();
-                let delay = time::Duration::from_millis(rng.gen_range(0..random_delay_max));
-                async move {
-                    let service_res = fut.await?;
-                    thread::sleep(delay);
-                    Ok(service_res)
-                }
-            })
+            .wrap(DelayInjector::default())
             .wrap(FailureInjector::default())
             .wrap(RequestTracing::new())
             .wrap(Logger::default())
