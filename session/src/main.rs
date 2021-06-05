@@ -5,13 +5,13 @@ use cp_common::tracing::init_jaeger_endpoint;
 use env_logger::Env;
 use serde::Serialize;
 use serde_json::{Map, Value};
-use std::{time::Duration};
+use std::time::Duration;
 
 mod session;
 use session::*;
 
 use actix_web_opentelemetry::{ClientExt, RequestTracing};
-use opentelemetry::{Context};
+use opentelemetry::Context;
 
 #[derive(Debug, Clone)]
 struct AppState {
