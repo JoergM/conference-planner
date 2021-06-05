@@ -2067,11 +2067,10 @@ dependencies = [
  "actix-service",
  "actix-web",
  "actix-web-opentelemetry",
+ "cp-common",
  "env_logger",
- "handlebars",
  "opentelemetry",
  "opentelemetry-jaeger",
- "rand 0.8.3",
  "serde",
  "serde_json",
 ]

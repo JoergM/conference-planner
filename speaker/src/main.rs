@@ -1,10 +1,10 @@
-use actix_service::Service;
 use actix_web::{get, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
 use opentelemetry::{global, sdk::propagation::TraceContextPropagator};
-use rand::Rng;
-use std::env;
-use std::{thread, time};
+
+use cp_common::delay::DelayInjector;
+use cp_common::failure::FailureInjector;
+use cp_common::tracing::*;
 
 mod speaker;
 use speaker::*;
@@ -40,55 +40,26 @@ async fn speaker_by_id(
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    //reading Content from environment
-    let failure_rate_env = env::var("FAILURE_RATE").unwrap_or("0".to_string());
-    let failure_rate: i32 = failure_rate_env.parse().unwrap();
-    let random_delay_env = env::var("RANDOM_DELAY_MAX").unwrap_or("1".to_string());
-    let random_delay_max: u64 = random_delay_env.parse().unwrap();
-
-    // register opentelemetry collector
-    let collector_env =
-        env::var("OTEL_EXPORTER_JAEGER_ENDPOINT").unwrap_or("localhost:14268".to_string());
-    global::set_text_map_propagator(TraceContextPropagator::new());
-    let (_tracer, _uninstall) = opentelemetry_jaeger::new_pipeline()
-        .with_service_name("Speakers")
-        .with_collector_endpoint(format!("http://{}/api/traces", collector_env))
-        .install()
-        .unwrap();
-
     //initialize App_State
     let app_state = AppState {
         speakers: speaker::generate_examples(),
     };
+
+    // register opentelemetry collector
+    global::set_text_map_propagator(TraceContextPropagator::new());
+    let (_tracer, _uninstall) = opentelemetry_jaeger::new_pipeline()
+        .with_service_name("Speakers")
+        .with_collector_endpoint(get_collector_endpoint())
+        .install()
+        .unwrap();
 
     //Initialize Logger
     env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
 
     HttpServer::new(move || {
         App::new()
-            .wrap_fn(move |req, srv| {
-                let fut = srv.call(req);
-                let mut rng = rand::thread_rng();
-                let failure = rng.gen_range(0..100) < failure_rate;
-                async move {
-                    let mut service_res = fut.await?;
-
-                    if failure {
-                        *service_res.response_mut() = HttpResponse::ServiceUnavailable().finish();
-                    }
-                    Ok(service_res)
-                }
-            })
-            .wrap_fn(move |req, srv| {
-                let fut = srv.call(req);
-                let mut rng = rand::thread_rng();
-                let delay = time::Duration::from_millis(rng.gen_range(0..random_delay_max));
-                async move {
-                    let service_res = fut.await?;
-                    thread::sleep(delay);
-                    Ok(service_res)
-                }
-            })
+            .wrap(DelayInjector::default())
+            .wrap(FailureInjector::default())
             .wrap(RequestTracing::new())
             .wrap(Logger::default())
             .data(app_state.clone())
