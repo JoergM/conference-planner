@@ -19,6 +19,5 @@ pub async fn get_body_with_tracing(url: &str) -> String {
         .unwrap();
     let body = resp.body().await.unwrap();
     let body_text = String::from_utf8(body.to_vec()).unwrap();
-    dbg!(&body_text);
     body_text
 }

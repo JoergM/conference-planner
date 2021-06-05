@@ -1,13 +1,12 @@
-use actix_service::Service;
 use actix_web::{get, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
-use actix_web_opentelemetry::{ClientExt, RequestTracing};
+use actix_web_opentelemetry::RequestTracing;
+use cp_common::delay::DelayInjector;
+use cp_common::failure::FailureInjector;
+use cp_common::tracing::*;
 use env_logger::Env;
-use opentelemetry::{global, sdk::propagation::TraceContextPropagator, Context};
-use rand::Rng;
+use opentelemetry::{global, sdk::propagation::TraceContextPropagator};
 use serde::Serialize;
 use serde_json::{Map, Value};
-use std::{env, time::Duration};
-use std::{thread, time};
 
 mod schedule_entries;
 use schedule_entries::*;
@@ -15,20 +14,6 @@ use schedule_entries::*;
 #[derive(Debug, Clone)]
 struct AppState {
     schedule_entries: Vec<ScheduleEntry>,
-}
-
-async fn get_body_with_tracing(url: &str) -> String {
-    let client = awc::Client::default();
-    let mut resp = client
-        .get(url)
-        .timeout(Duration::from_secs(10))
-        .trace_request_with_context(Context::current())
-        .send()
-        .await
-        .unwrap();
-    let body = resp.body().await.unwrap();
-    let body_text = String::from_utf8(body.to_vec()).unwrap();
-    body_text
 }
 
 #[derive(Serialize)]
@@ -85,24 +70,16 @@ async fn list(scope: web::Data<AppState>) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    //reading Content from environment
-    let failure_rate_env = env::var("FAILURE_RATE").unwrap_or("0".to_string());
-    let failure_rate: i32 = failure_rate_env.parse().unwrap();
-    let random_delay_env = env::var("RANDOM_DELAY_MAX").unwrap_or("1".to_string());
-    let random_delay_max: u64 = random_delay_env.parse().unwrap();
-
     //initialize App_State
     let app_state = AppState {
         schedule_entries: schedule_entries::generate_examples(),
     };
 
     // register opentelemetry collector
-    let collector_env =
-        env::var("OTEL_EXPORTER_JAEGER_ENDPOINT").unwrap_or("localhost:14268".to_string());
     global::set_text_map_propagator(TraceContextPropagator::new());
     let (_tracer, _uninstall) = opentelemetry_jaeger::new_pipeline()
         .with_service_name("Schedule")
-        .with_collector_endpoint(format!("http://{}/api/traces", collector_env))
+        .with_collector_endpoint(get_collector_endpoint())
         .install()
         .unwrap();
 
@@ -111,29 +88,8 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
-            .wrap_fn(move |req, srv| {
-                let fut = srv.call(req);
-                let mut rng = rand::thread_rng();
-                let failure = rng.gen_range(0..100) < failure_rate;
-                async move {
-                    let mut service_res = fut.await?;
-
-                    if failure {
-                        *service_res.response_mut() = HttpResponse::ServiceUnavailable().finish();
-                    }
-                    Ok(service_res)
-                }
-            })
-            .wrap_fn(move |req, srv| {
-                let fut = srv.call(req);
-                let mut rng = rand::thread_rng();
-                let delay = time::Duration::from_millis(rng.gen_range(0..random_delay_max));
-                async move {
-                    let service_res = fut.await?;
-                    thread::sleep(delay);
-                    Ok(service_res)
-                }
-            })
+            .wrap(DelayInjector::default())
+            .wrap(FailureInjector::default())
             .wrap(RequestTracing::new())
             .wrap(Logger::default())
             .data(app_state.clone())
