@@ -1,36 +1,20 @@
 use actix_web::{get, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
+use actix_web_opentelemetry::RequestTracing;
 use cp_common::delay::DelayInjector;
 use cp_common::failure::FailureInjector;
-use cp_common::tracing::init_jaeger_endpoint;
+use cp_common::tracing::*;
 use env_logger::Env;
+use opentelemetry::{global, sdk::propagation::TraceContextPropagator};
+use opentelemetry_jaeger::new_pipeline;
 use serde::Serialize;
 use serde_json::{Map, Value};
-use std::time::Duration;
 
 mod session;
 use session::*;
 
-use actix_web_opentelemetry::{ClientExt, RequestTracing};
-use opentelemetry::Context;
-
 #[derive(Debug, Clone)]
 struct AppState {
     sessions: Vec<Session>,
-}
-
-//todo move to common
-async fn get_body_with_tracing(url: &str) -> String {
-    let client = awc::Client::default();
-    let mut resp = client
-        .get(url)
-        .timeout(Duration::from_secs(10))
-        .trace_request_with_context(Context::current())
-        .send()
-        .await
-        .unwrap();
-    let body = resp.body().await.unwrap();
-    let body_text = String::from_utf8(body.to_vec()).unwrap();
-    body_text
 }
 
 #[derive(Serialize)]
@@ -109,7 +93,12 @@ async fn main() -> std::io::Result<()> {
     };
 
     // register opentelemetry collector
-    init_jaeger_endpoint();
+    global::set_text_map_propagator(TraceContextPropagator::new());
+    let (_tracer, _uninstall) = new_pipeline()
+        .with_service_name("Session")
+        .with_collector_endpoint(get_collector_endpoint())
+        .install()
+        .unwrap();
 
     //Initialize Logger
     env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();

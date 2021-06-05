@@ -534,9 +534,10 @@ name = "cp-common"
 version = "0.1.0"
 dependencies = [
  "actix-web",
+ "actix-web-opentelemetry",
+ "awc",
  "futures",
  "opentelemetry",
- "opentelemetry-jaeger",
  "rand 0.8.3",
 ]
 
@@ -1987,11 +1988,10 @@ dependencies = [
  "actix-service",
  "actix-web",
  "actix-web-opentelemetry",
- "awc",
  "cp-common",
  "env_logger",
- "handlebars",
  "opentelemetry",
+ "opentelemetry-jaeger",
  "serde",
  "serde_json",
  "tokio 0.2.25",
