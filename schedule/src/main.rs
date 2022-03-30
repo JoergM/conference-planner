@@ -95,7 +95,7 @@ async fn main() -> std::io::Result<()> {
             .data(app_state.clone())
             .service(list)
     })
-    .bind("127.0.0.1:8083")?
+    .bind("0.0.0.0:8083")?
     .run()
     .await
 }

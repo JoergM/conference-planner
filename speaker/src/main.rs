@@ -66,7 +66,7 @@ async fn main() -> std::io::Result<()> {
             .service(list)
             .service(speaker_by_id)
     })
-    .bind("127.0.0.1:8081")?
+    .bind("0.0.0.0:8081")?
     .run()
     .await
 }
