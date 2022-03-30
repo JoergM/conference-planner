@@ -1,14 +1,6 @@
-FROM rust:1.51 as builder
-
-RUN USER=root cargo new --bin session
-WORKDIR ./session
-COPY ./Cargo.toml ./Cargo.toml
-RUN cargo build --release
-RUN rm src/*.rs
+FROM rust:1.59 as builder
 
 ADD . ./
-
-RUN rm ./target/release/deps/session*
 RUN cargo build --release
 
 
@@ -27,13 +19,13 @@ RUN groupadd $APP_USER \
     && useradd -g $APP_USER $APP_USER \
     && mkdir -p ${APP}
 
-COPY --from=builder /session/target/release/session ${APP}/session
+COPY --from=builder /target/release/loadgenerator ${APP}/loadgenerator
 
 RUN chown -R $APP_USER:$APP_USER ${APP}
 
 USER $APP_USER
 WORKDIR ${APP}
 
-EXPOSE 8082
+EXPOSE 8083
 
-CMD ["./session"]
+CMD ["./schedule"]
